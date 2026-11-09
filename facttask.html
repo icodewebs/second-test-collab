@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculating Factorial</title>
+</head>
+
+<body>
+    <div align="center" style="background-color:#ccc">
+        <h1>Calculating Factorial</h1>
+    </div>
+    
+    <form id="my-form">
+        <label for="number"><b>Enter a number: </b></label> 
+        <input type="number" id="number" name="num" required>
+        <button type="submit" onclick="calcFact(event)">Calculate</button>
+        <button type="reset" onclick="resetline(event)">Reset</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        function calcFact(event) {
+            event.preventDefault(); 
+            
+            let num = Number(document.querySelector('#my-form input').value);
+            
+            let factorial = 1;
+            for (let i = 1; i <= num; i++) {
+                factorial *= i;
+            }
+            
+            document.getElementById('result').innerHTML = `<b>Factorial of ${num} is:</b> ${factorial}`;
+        }
+
+        function resetline(event) {
+            document.getElementById('result').innerHTML = ``;
+        }
+    </script>
+</body>
+</html>
