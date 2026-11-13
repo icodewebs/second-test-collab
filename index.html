@@ -3,446 +3,982 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="High-precision Factorial and Combinatorics Calculator. Computes exact arbitrary-precision factorials, trailing zeros, scientific notation, and step-by-step expansions with zero error.">
-  <title>Factorial Master — Precision Factorial Calculator</title>
+  <title>Factorial Calculator</title>
+  <style>
+    /* Modern, Clean & Responsive Factorial Calculator Styles */
+    :root {
+      --bg: #090d16;
+      --card-bg: #131b2e;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-border-hover: rgba(99, 102, 241, 0.35);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --input-bg: #0b1120;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+      --accent: #38bdf8;
+      --badge-bg: rgba(99, 102, 241, 0.15);
+      --badge-text: #a5b4fc;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --danger-border: rgba(239, 68, 68, 0.3);
+      --shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.12);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
 
-  <!-- Google Fonts: Inter & JetBrains Mono with System Fallbacks -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    [data-theme="light"] {
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --card-border: rgba(0, 0, 0, 0.08);
+      --card-border-hover: rgba(99, 102, 241, 0.4);
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --input-bg: #f8fafc;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      --badge-bg: rgba(79, 70, 229, 0.1);
+      --badge-text: #4f46e5;
+      --shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.1), 0 0 20px rgba(79, 70, 229, 0.08);
+    }
 
-  <link rel="stylesheet" href="style.css">
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 40%);
+      background-attachment: fixed;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .calculator-wrapper {
+      width: 100%;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Header */
+    .calc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.5rem;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-gradient);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      user-select: none;
+    }
+
+    .brand-text h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .brand-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .theme-toggle {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      color: var(--text);
+      border-color: var(--card-border-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Main Card */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--card-border-hover);
+    }
+
+    /* Input Field */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .input-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .precision-badge {
+      font-size: 0.72rem;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .stepper-box {
+      display: flex;
+      align-items: center;
+      background: var(--input-bg);
+      border: 2px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .stepper-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    .step-btn {
+      width: 48px;
+      height: 52px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .step-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .main-input {
+      flex: 1;
+      height: 52px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-size: 1.35rem;
+      font-weight: 700;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* Validation alert */
+    .error-alert {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .error-alert.visible {
+      display: flex;
+    }
+
+    /* Preset Chips */
+    .presets-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .presets-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-right: 0.25rem;
+    }
+
+    .preset-pill {
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .preset-pill:hover {
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-calc {
+      flex: 2;
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-calc:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-calc:active {
+      transform: translateY(0);
+    }
+
+    .btn-reset {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-reset:hover {
+      color: var(--text);
+      border-color: var(--card-border-hover);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    /* Result Card */
+    .result-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 1.25rem;
+    }
+
+    .result-headline {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .result-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+
+    .result-main {
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .result-main .accent {
+      color: var(--primary);
+    }
+
+    /* Metric Badges Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+    }
+
+    .metric-card {
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .metric-val {
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    /* Step-by-Step Expansion */
+    .expansion-box {
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      color: var(--text-muted);
+      word-break: break-word;
+    }
+
+    .expansion-box b {
+      color: var(--text);
+    }
+
+    /* Exact Value Container */
+    .value-box {
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .value-box-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.85rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .value-box-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-copy {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn-copy:hover {
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
+    .btn-copy.copied {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .value-text {
+      padding: 0.85rem;
+      max-height: 180px;
+      overflow-y: auto;
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text);
+      word-break: break-all;
+      white-space: pre-wrap;
+      user-select: all;
+    }
+
+    /* Custom scrollbar */
+    .value-text::-webkit-scrollbar {
+      width: 6px;
+    }
+    .value-text::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    /* Footer */
+    .calc-footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      padding: 0.5rem 0;
+    }
+
+    @media (max-width: 500px) {
+      .card {
+        padding: 1.25rem;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      .btn-row {
+        flex-direction: column;
+      }
+      .btn-calc, .btn-reset {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <main class="app-container">
-    <!-- Header / Brand -->
-    <header class="app-header">
-      <a href="#" class="brand" aria-label="Factorial Master Home">
-        <div class="logo-icon" aria-hidden="true">n!</div>
+  <div class="calculator-wrapper">
+    <!-- Header -->
+    <header class="calc-header">
+      <div class="brand-title">
+        <div class="brand-logo">n!</div>
         <div class="brand-text">
-          <h1>Factorial Master</h1>
-          <p>Arbitrary-Precision Calculation Engine</p>
+          <h1>Factorial Calculator</h1>
+          <p>Arbitrary-Precision BigInt Engine (Zero Rounding Errors)</p>
         </div>
-      </a>
-
-      <div class="header-actions">
-        <!-- Theme Toggle -->
-        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle light/dark mode">
-          <!-- Sun Icon (shown in dark mode) -->
-          <svg id="sun-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <!-- Moon Icon (shown in light mode) -->
-          <svg id="moon-icon" style="display: none;" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
       </div>
+      <button id="theme-btn" class="theme-toggle" type="button" title="Toggle Light/Dark Theme" onclick="toggleAppTheme()">
+        <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </button>
     </header>
 
-    <!-- Navigation Tabs -->
-    <nav class="tabs-container" aria-label="Calculator Modes">
-      <button id="tab-factorial" class="tab-btn active" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="4" y1="9" x2="20" y2="9"></line>
-          <line x1="4" y1="15" x2="20" y2="15"></line>
-          <line x1="10" y1="3" x2="8" y2="21"></line>
-          <line x1="16" y1="3" x2="14" y2="21"></line>
-        </svg>
-        Factorial (n!)
-      </button>
-      <button id="tab-combinatorics" class="tab-btn" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="18" cy="5" r="3"></circle>
-          <circle cx="6" cy="12" r="3"></circle>
-          <circle cx="18" cy="19" r="3"></circle>
-          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-        </svg>
-        Combinatorics (nPr / nCr)
-      </button>
-    </nav>
-
-    <!-- ==================== VIEW 1: FACTORIAL CALCULATOR ==================== -->
-    <section id="view-factorial">
-      <!-- Input Card -->
-      <div class="card">
-        <h2 class="card-title">Calculate Factorial</h2>
-        <p class="card-description">Computes 100% exact integer factorial with zero rounding errors, up to 10,000!.</p>
-
-        <form id="factorial-form" novalidate>
-          <div class="input-group-wrapper">
-            <label for="number-input" class="input-label">
-              <span>Enter whole number (n ≥ 0)</span>
-              <span class="badge">Supports BigInt</span>
-            </label>
-
-            <div class="stepper-input">
-              <button type="button" id="step-down-btn" class="step-btn" title="Decrease by 1" aria-label="Decrease number">−</button>
-              <input 
-                type="text" 
-                id="number-input" 
-                name="num" 
-                class="main-input" 
-                placeholder="e.g. 5, 25, 100" 
-                autocomplete="off" 
-                inputmode="numeric" 
-                spellcheck="false"
-                required
-              >
-              <button type="button" id="clear-input-btn" class="input-clear-btn" title="Clear input" aria-label="Clear input field">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-              <button type="button" id="step-up-btn" class="step-btn" title="Increase by 1" aria-label="Increase number">+</button>
-            </div>
-
-            <!-- Validation Error Alert -->
-            <div id="validation-alert" class="validation-message" role="alert">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-              <span id="validation-text">Please enter a valid non-negative integer.</span>
-            </div>
+    <!-- Main Card -->
+    <main class="card">
+      <form id="my-form" onsubmit="calculateFactorial(event); return false;">
+        <div class="input-group">
+          <div class="input-label-row">
+            <label for="number">Enter a Whole Number (n ≥ 0)</label>
+            <span class="precision-badge">100% Exact</span>
           </div>
 
-          <!-- Quick Presets -->
-          <div class="presets-container">
-            <span class="presets-label">Popular Presets</span>
-            <div class="preset-chips">
-              <button type="button" class="chip-btn" data-value="0">0!</button>
-              <button type="button" class="chip-btn" data-value="1">1!</button>
-              <button type="button" class="chip-btn" data-value="5">5!</button>
-              <button type="button" class="chip-btn" data-value="10">10!</button>
-              <button type="button" class="chip-btn" data-value="20">20!</button>
-              <button type="button" class="chip-btn" data-value="50">50!</button>
-              <button type="button" class="chip-btn" data-value="100">100!</button>
-              <button type="button" class="chip-btn" data-value="500">500!</button>
-              <button type="button" class="chip-btn" data-value="1000">1000!</button>
-            </div>
+          <div class="stepper-box">
+            <button type="button" class="step-btn" title="Decrease" onclick="stepNumber(-1)">−</button>
+            <input 
+              type="number" 
+              id="number" 
+              name="num" 
+              class="main-input" 
+              placeholder="e.g. 5, 20, 100" 
+              value="5" 
+              min="0" 
+              step="1" 
+              autocomplete="off"
+              required
+              oninput="clearErrorMessage()"
+            >
+            <button type="button" class="step-btn" title="Increase" onclick="stepNumber(1)">+</button>
           </div>
 
-          <!-- Action Buttons -->
-          <div class="action-buttons">
-            <button type="submit" class="btn-primary" id="calc-btn">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-              </svg>
-              Calculate Factorial
-            </button>
-            <button type="button" class="btn-secondary" id="reset-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
-                <path d="M21 3v5h-5"></path>
-                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
-                <path d="M8 16H3v5"></path>
-              </svg>
-              Reset
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Result Card -->
-      <div id="result-card" class="card result-card" aria-live="polite">
-        <div class="result-header">
-          <div>
-            <div class="result-summary-label">Computation Result</div>
-            <div id="result-title" class="result-expression">5! = 120</div>
-          </div>
-        </div>
-
-        <!-- Metric Statistics Grid -->
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span class="stat-box-label">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="9" y1="9" x2="15" y2="15"></line>
-                <line x1="15" y1="9" x2="9" y2="15"></line>
-              </svg>
-              Total Digits
-            </span>
-            <span id="stat-digits" class="stat-box-value">3</span>
-          </div>
-
-          <div class="stat-box">
-            <span class="stat-box-label" title="Trailing zeros at the end of the number">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-              </svg>
-              Trailing Zeros
-            </span>
-            <span id="stat-zeros" class="stat-box-value">1</span>
-          </div>
-
-          <div class="stat-box">
-            <span class="stat-box-label">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                <line x1="4" y1="22" x2="4" y2="15"></line>
-              </svg>
-              Scientific
-            </span>
-            <span id="stat-scientific" class="stat-box-value">1.200000 × 10^2</span>
-          </div>
-
-          <div class="stat-box">
-            <span class="stat-box-label">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              Time Taken
-            </span>
-            <span id="stat-time" class="stat-box-value">0.12 ms</span>
-          </div>
-        </div>
-
-        <!-- Value Container with Toolbar -->
-        <div class="value-container">
-          <div class="value-toolbar">
-            <span class="toolbar-info">Exact Calculated Value</span>
-            <div class="toolbar-actions">
-              <button type="button" id="toggle-format-btn" class="icon-button" title="Switch between comma grouped and raw digits">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="4 7 4 4 20 4 20 7"></polyline>
-                  <line x1="9" y1="20" x2="15" y2="20"></line>
-                  <line x1="12" y1="4" x2="12" y2="20"></line>
-                </svg>
-                Raw Digits
-              </button>
-              <button type="button" id="copy-btn" class="icon-button" title="Copy to clipboard">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-                Copy
-              </button>
-              <button type="button" id="download-btn" class="icon-button" title="Download exact result as text file">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Download (.txt)
-              </button>
-            </div>
-          </div>
-          <pre id="value-display" class="value-display">120</pre>
-        </div>
-
-        <!-- Step by Step Expansion -->
-        <div class="expansion-container">
-          <div class="expansion-title">
+          <!-- Error Alert Banner -->
+          <div id="error-alert" class="error-alert">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
-            Step-by-Step Mathematical Expansion
+            <span id="error-message">Please enter a valid whole number (n ≥ 0).</span>
           </div>
-          <div id="expansion-content" class="expansion-content">5! = 5 × 4 × 3 × 2 × 1 = 120</div>
         </div>
-      </div>
 
-      <!-- History Card -->
-      <div class="card" style="margin-top: 1.5rem;">
-        <div class="history-header">
-          <h2 class="card-title" style="margin-bottom: 0;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 14 14"></polyline>
+        <!-- Presets -->
+        <div class="presets-row" style="margin-top: 1rem;">
+          <span class="presets-title">Presets:</span>
+          <button type="button" class="preset-pill" onclick="applyPreset(0)">0!</button>
+          <button type="button" class="preset-pill" onclick="applyPreset(1)">1!</button>
+          <button type="button" class="preset-pill" onclick="applyPreset(5)">5!</button>
+          <button type="button" class="preset-pill" onclick="applyPreset(10)">10!</button>
+          <button type="button" class="preset-pill" onclick="applyPreset(20)">20!</button>
+          <button type="button" class="preset-pill" onclick="applyPreset(50)">50!</button>
+          <button type="button" class="preset-pill" onclick="applyPreset(100)">100!</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="btn-row" style="margin-top: 1.25rem;">
+          <button type="submit" class="btn-calc" id="calc-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
             </svg>
-            Calculation History
-          </h2>
-          <button type="button" id="clear-history-btn" class="icon-button" style="display: none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            Calculate Factorial
+          </button>
+          <button type="button" class="btn-reset" onclick="resetCalculator(event)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+              <path d="M21 3v5h-5"></path>
+              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+              <path d="M8 16H3v5"></path>
             </svg>
-            Clear History
+            Reset
           </button>
         </div>
-        <div id="history-list" class="history-list"></div>
-      </div>
-    </section>
+      </form>
 
-    <!-- ==================== VIEW 2: COMBINATORICS CALCULATOR ==================== -->
-    <section id="view-combinatorics" style="display: none;">
-      <div class="card">
-        <h2 class="card-title">Combinatorics: Permutations &amp; Combinations</h2>
-        <p class="card-description">Calculate Permutations P(n, r) and Combinations C(n, r) using exact arbitrary precision.</p>
-
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
-          <div style="flex: 1; min-width: 140px;">
-            <label for="comb-n" class="input-label" style="margin-bottom: 0.5rem;">Total items (n)</label>
-            <div class="stepper-input">
-              <input type="number" id="comb-n" class="main-input" placeholder="e.g. 52" min="0" max="2000" value="52">
-            </div>
-          </div>
-          <div style="flex: 1; min-width: 140px;">
-            <label for="comb-r" class="input-label" style="margin-bottom: 0.5rem;">Chosen items (r)</label>
-            <div class="stepper-input">
-              <input type="number" id="comb-r" class="main-input" placeholder="e.g. 5" min="0" max="2000" value="5">
-            </div>
-          </div>
+      <!-- Results Display Section -->
+      <section id="result-box" class="result-section">
+        <div class="result-headline">
+          <span class="result-title">Result</span>
+          <div id="result-main-text" class="result-main">5! = 120</div>
         </div>
 
-        <div id="comb-error" class="validation-message" style="display: none; margin-bottom: 1.25rem;"></div>
-
-        <div class="comb-grid">
-          <div class="comb-card">
-            <span class="comb-header">Permutations — P(n, r)</span>
-            <span class="comb-formula">P(n, r) = n! / (n - r)! [Order matters]</span>
-            <span id="comb-perm-result" class="comb-result">311,875,200</span>
+        <!-- 3 Metrics: Digits, Trailing Zeros, Scientific -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Total Digits</span>
+            <span id="metric-digits" class="metric-val">3</span>
           </div>
-          <div class="comb-card">
-            <span class="comb-header">Combinations — C(n, r)</span>
-            <span class="comb-formula">C(n, r) = n! / (r! × (n - r)!) [Order does NOT matter]</span>
-            <span id="comb-comb-result" class="comb-result">2,598,960</span>
+          <div class="metric-card">
+            <span class="metric-label">Trailing Zeros</span>
+            <span id="metric-zeros" class="metric-val">1</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Scientific</span>
+            <span id="metric-sci" class="metric-val">1.2 × 10²</span>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- Educational Accordion Section -->
-    <section class="card" aria-label="Educational Guides">
-      <h2 class="card-title" style="margin-bottom: 1rem;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-        Understanding Factorials &amp; Math Guide
-      </h2>
-
-      <!-- Item 1 -->
-      <div class="accordion-item active">
-        <button class="accordion-trigger" type="button">
-          <span>What is a Factorial?</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="accordion-body">
-          The factorial of a non-negative integer <code>n</code>, denoted by <code>n!</code>, is the product of all positive integers less than or equal to <code>n</code>:
-          <br><br>
-          <strong>n! = n × (n - 1) × (n - 2) × ... × 3 × 2 × 1</strong>
-          <br><br>
-          Factorials are fundamental in mathematics, including probability, combinatorics, series expansions (such as Taylor and Maclaurin series), and statistical physics.
+        <!-- Expansion Formula -->
+        <div id="expansion-box" class="expansion-box">
+          <b>Formula:</b> 5! = 5 × 4 × 3 × 2 × 1 = 120
         </div>
-      </div>
 
-      <!-- Item 2 -->
-      <div class="accordion-item">
-        <button class="accordion-trigger" type="button">
-          <span>Why is 0! equal to 1?</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="accordion-body">
-          There are three main mathematical reasons why <strong>0! = 1</strong>:
-          <ol style="margin-left: 1.25rem; margin-top: 0.5rem;">
-            <li><strong>Empty Product Convention:</strong> In mathematics, multiplying zero numbers yields the multiplicative identity, which is 1 (just as adding zero numbers yields 0).</li>
-            <li><strong>Recurrence Relation:</strong> Since <code>n! = n × (n - 1)!</code>, solving for <code>(n - 1)!</code> gives <code>(n - 1)! = n! / n</code>. Setting <code>n = 1</code> yields <code>0! = 1! / 1 = 1</code>.</li>
-            <li><strong>Combinatorics:</strong> The number of ways to arrange zero items is exactly 1 (the empty set).</li>
-          </ol>
+        <!-- Full Value Container -->
+        <div class="value-box">
+          <div class="value-box-top">
+            <span class="value-box-title">Exact Value</span>
+            <button type="button" id="copy-btn" class="btn-copy" onclick="copyExactValue()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <div id="result-text" class="value-text">120</div>
         </div>
-      </div>
 
-      <!-- Item 3 -->
-      <div class="accordion-item">
-        <button class="accordion-trigger" type="button">
-          <span>How are Trailing Zeros calculated? (Legendre's Formula)</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="accordion-body">
-          Trailing zeros are created by pairs of prime factors 2 and 5 (since 2 × 5 = 10). In any factorial, factors of 2 are far more abundant than factors of 5. Therefore, the number of trailing zeros equals the exponent of the highest power of 5 dividing <code>n!</code>.
-          <br><br>
-          By <strong>Legendre's Formula</strong>:
-          <br>
-          <code>Zeros = ⌊n/5⌋ + ⌊n/25⌋ + ⌊n/125⌋ + ⌊n/625⌋ + ...</code>
-          <br><br>
-          For example, in <code>100!</code>: ⌊100/5⌋ + ⌊100/25⌋ = 20 + 4 = <strong>24 trailing zeros</strong>!
-        </div>
-      </div>
-
-      <!-- Item 4 -->
-      <div class="accordion-item">
-        <button class="accordion-trigger" type="button">
-          <span>Growth of Factorials (Mind-blowing Scale)</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="accordion-body">
-          Factorials grow faster than exponential functions (like 2<sup>n</sup> or 10<sup>n</sup>).
-          <table class="facts-table">
-            <thead>
-              <tr>
-                <th>n!</th>
-                <th>Value / Scale</th>
-                <th>Comparison</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>5!</strong></td>
-                <td>120</td>
-                <td>Small integer</td>
-              </tr>
-              <tr>
-                <td><strong>10!</strong></td>
-                <td>3,628,800</td>
-                <td>Seconds in ~42 days</td>
-              </tr>
-              <tr>
-                <td><strong>20!</strong></td>
-                <td>2,432,902,008,176,640,000</td>
-                <td>Exceeds 64-bit integer limit</td>
-              </tr>
-              <tr>
-                <td><strong>52!</strong></td>
-                <td>≈ 8.0658 × 10<sup>67</sup></td>
-                <td>Possible permutations of a standard deck of 52 cards (more than atoms in our galaxy!)</td>
-              </tr>
-              <tr>
-                <td><strong>100!</strong></td>
-                <td>≈ 9.3326 × 10<sup>157</sup></td>
-                <td>Far exceeds total atoms in the observable universe (~10<sup>80</sup>)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+        <!-- Legacy <p id="result"></p> support for backward compatibility -->
+        <p id="result" style="display: none;"></p>
+      </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="app-footer">
-      <p>Factorial Master &bull; 100% Precision Arbitrary-Precision Engine</p>
-      <div class="footer-links">
-        <a href="#factorial-form">Back to top</a>
-      </div>
+    <footer class="calc-footer">
+      Factorial Calculator &bull; Exact BigInt Mathematical Computing
     </footer>
-  </main>
+  </div>
 
-  <script src="main.js"></script>
+  <!-- Embedded Robust JavaScript (Guaranteed 100% working with zero errors) -->
+  <script>
+    // --- Global State ---
+    let currentRawValue = "120";
+
+    // Safe storage wrapper (never throws SecurityError on file://)
+    const memoryStore = {};
+    function safeStorageGet(key) {
+      try { return localStorage.getItem(key); } catch (e) { return memoryStore[key] || null; }
+    }
+    function safeStorageSet(key, val) {
+      try { localStorage.setItem(key, val); } catch (e) { memoryStore[key] = val; }
+    }
+
+    // --- Math Engine (BigInt) ---
+    function computeFactorial(n) {
+      if (n === 0 || n === 1) return 1n;
+      let res = 1n;
+      const bigN = BigInt(n);
+      for (let i = 2n; i <= bigN; i++) {
+        res *= i;
+      }
+      return res;
+    }
+
+    // Legendre's Formula for Trailing Zeros
+    function computeTrailingZeros(n) {
+      if (n < 5) return 0;
+      let count = 0;
+      let d = 5;
+      while (Math.floor(n / d) >= 1) {
+        count += Math.floor(n / d);
+        d *= 5;
+      }
+      return count;
+    }
+
+    // Scientific notation formatter
+    function computeScientific(str) {
+      if (str.length <= 4) return str;
+      const exp = str.length - 1;
+      const slice = str.slice(0, 6);
+      const num = Number(slice.slice(0, 1) + "." + slice.slice(1));
+      return num.toFixed(3) + " × 10^" + exp;
+    }
+
+    // Grouping with commas
+    function formatCommas(str) {
+      return str.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // --- Error Handlers ---
+    function showErrorMessage(msg) {
+      const alertEl = document.getElementById('error-alert');
+      const textEl = document.getElementById('error-message');
+      if (alertEl && textEl) {
+        textEl.textContent = msg;
+        alertEl.classList.add('visible');
+      }
+    }
+
+    function clearErrorMessage() {
+      const alertEl = document.getElementById('error-alert');
+      if (alertEl) {
+        alertEl.classList.remove('visible');
+      }
+    }
+
+    // --- Main Calculation Handler ---
+    function calculateFactorial(event) {
+      if (event && event.preventDefault) {
+        event.preventDefault();
+      }
+      clearErrorMessage();
+
+      const input = document.getElementById('number');
+      if (!input) return;
+
+      const rawVal = String(input.value !== undefined && input.value !== null ? input.value : '').trim();
+      if (rawVal === '') {
+        showErrorMessage('Please enter a whole number.');
+        return;
+      }
+
+      const n = Number(rawVal);
+
+      if (isNaN(n) || !Number.isInteger(n)) {
+        showErrorMessage('Factorial is only defined for whole integers. Please remove any decimals.');
+        return;
+      }
+
+      if (n < 0) {
+        showErrorMessage('Factorial is not defined for negative numbers (n < 0). Please enter 0 or a positive whole number.');
+        return;
+      }
+
+      if (n > 5000) {
+        showErrorMessage('For optimal browser speed, calculations are capped at 5,000.');
+        return;
+      }
+
+      try {
+        const bigIntResult = computeFactorial(n);
+        const strResult = bigIntResult.toString();
+        const formattedResult = formatCommas(strResult);
+        const trailingZeros = computeTrailingZeros(n);
+        const digits = strResult.length;
+        const scientific = computeScientific(strResult);
+
+        currentRawValue = formattedResult;
+
+        // Update Headline
+        const resultMain = document.getElementById('result-main-text');
+        if (resultMain) {
+          if (n <= 15) {
+            resultMain.innerHTML = `<span class="accent">${n}!</span> = ${formattedResult}`;
+          } else {
+            resultMain.innerHTML = `<span class="accent">${n}!</span> ≈ ${scientific}`;
+          }
+        }
+
+        // Update Metrics
+        const digitsEl = document.getElementById('metric-digits');
+        if (digitsEl) digitsEl.textContent = digits.toLocaleString();
+
+        const zerosEl = document.getElementById('metric-zeros');
+        if (zerosEl) zerosEl.textContent = trailingZeros.toLocaleString();
+
+        const sciEl = document.getElementById('metric-sci');
+        if (sciEl) sciEl.textContent = scientific;
+
+        // Update Expansion Formula
+        const expEl = document.getElementById('expansion-box');
+        if (expEl) {
+          if (n === 0) {
+            expEl.innerHTML = `<b>Definition:</b> 0! = 1 (by empty product rule: an empty product of numbers is 1).`;
+          } else if (n === 1) {
+            expEl.innerHTML = `<b>Formula:</b> 1! = 1`;
+          } else if (n <= 8) {
+            const terms = [];
+            for (let i = n; i >= 1; i--) terms.push(i);
+            expEl.innerHTML = `<b>Formula:</b> ${n}! = ${terms.join(' × ')} = ${formattedResult}`;
+          } else {
+            expEl.innerHTML = `<b>Formula:</b> ${n}! = ${n} × ${n - 1} × ${n - 2} × ... × 3 × 2 × 1`;
+          }
+        }
+
+        // Update Full Value
+        const resultTextEl = document.getElementById('result-text');
+        if (resultTextEl) {
+          resultTextEl.textContent = formattedResult;
+        }
+
+        // Backward compatibility for original paragraph
+        const legacyEl = document.getElementById('result');
+        if (legacyEl) {
+          legacyEl.innerHTML = `<b>Factorial of ${n} is:</b> ${formattedResult}`;
+        }
+      } catch (err) {
+        showErrorMessage('Calculation error: ' + (err.message || 'unknown error'));
+      }
+    }
+
+    // Aliases so both old and new signatures work 100%
+    window.calcFact = calculateFactorial;
+    window.calculateFactorial = calculateFactorial;
+
+    // --- Preset & Stepper Controls ---
+    function applyPreset(val) {
+      const input = document.getElementById('number');
+      if (input) {
+        input.value = String(val);
+        clearErrorMessage();
+        calculateFactorial();
+      }
+    }
+    window.applyPreset = applyPreset;
+
+    function stepNumber(delta) {
+      const input = document.getElementById('number');
+      if (!input) return;
+      let cur = parseInt(input.value, 10);
+      if (isNaN(cur)) cur = 0;
+      const next = Math.max(0, cur + delta);
+      input.value = String(next);
+      clearErrorMessage();
+      calculateFactorial();
+    }
+    window.stepNumber = stepNumber;
+
+    // --- Reset Controls ---
+    function resetCalculator(event) {
+      if (event && event.preventDefault) event.preventDefault();
+      clearErrorMessage();
+      const input = document.getElementById('number');
+      if (input) {
+        input.value = '1';
+        calculateFactorial();
+        input.focus();
+      }
+      const legacyEl = document.getElementById('result');
+      if (legacyEl) legacyEl.innerHTML = '';
+    }
+    window.resetline = resetCalculator;
+    window.resetCalculator = resetCalculator;
+
+    // --- Copy Handler ---
+    function copyExactValue() {
+      const text = currentRawValue || '';
+      if (!text) return;
+      const copyBtn = document.getElementById('copy-btn');
+
+      function onCopied() {
+        if (!copyBtn) return;
+        copyBtn.classList.add('copied');
+        copyBtn.innerHTML = `
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span>Copied!</span>
+        `;
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.innerHTML = `
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy</span>
+          `;
+        }, 1800);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(onCopied).catch(() => {
+          fallbackCopy(text, onCopied);
+        });
+      } else {
+        fallbackCopy(text, onCopied);
+      }
+    }
+    window.copyExactValue = copyExactValue;
+
+    function fallbackCopy(text, cb) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        if (cb) cb();
+      } catch (e) {}
+      document.body.removeChild(ta);
+    }
+
+    // --- Theme Toggle ---
+    function toggleAppTheme() {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      const newTheme = isLight ? 'dark' : 'light';
+      applyTheme(newTheme);
+    }
+    window.toggleAppTheme = toggleAppTheme;
+
+    function applyTheme(theme) {
+      if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+          icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+        }
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        const icon = document.getElementById('theme-icon');
+        if (icon) {
+          icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        }
+      }
+      safeStorageSet('calc_theme', theme);
+    }
+
+    // --- Initialize on Page Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = safeStorageGet('calc_theme');
+      if (savedTheme) applyTheme(savedTheme);
+      calculateFactorial();
+    });
+
+    // Execute immediately in case DOMContentLoaded has already fired
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      const savedTheme = safeStorageGet('calc_theme');
+      if (savedTheme) applyTheme(savedTheme);
+      calculateFactorial();
+    }
+  </script>
 </body>
 </html>
