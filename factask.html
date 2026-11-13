@@ -1,23 +1,448 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Calculating Factorial</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="High-precision Factorial and Combinatorics Calculator. Computes exact arbitrary-precision factorials, trailing zeros, scientific notation, and step-by-step expansions with zero error.">
+  <title>Factorial Master — Precision Factorial Calculator</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono with System Fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div align="center" style="background-color:#ccc">
-        <h1>Calculating Factorial</h1>
-    </div>
-    
-    <form id="my-form">
-        <label for="number"><b>Enter a number: </b></label> 
-        <input type="number" id="number" name="num" required>
-        <button type="submit" onclick="calcFact(event)">Calculate</button>
-        <button type="reset" onclick="resetline(event)">Reset</button>
-    </form>
 
-    <p id="result"></p>
+  <main class="app-container">
+    <!-- Header / Brand -->
+    <header class="app-header">
+      <a href="#" class="brand" aria-label="Factorial Master Home">
+        <div class="logo-icon" aria-hidden="true">n!</div>
+        <div class="brand-text">
+          <h1>Factorial Master</h1>
+          <p>Arbitrary-Precision Calculation Engine</p>
+        </div>
+      </a>
 
-  <script src="main.js"> </script>  
+      <div class="header-actions">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle light/dark mode">
+          <!-- Sun Icon (shown in dark mode) -->
+          <svg id="sun-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon Icon (shown in light mode) -->
+          <svg id="moon-icon" style="display: none;" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-container" aria-label="Calculator Modes">
+      <button id="tab-factorial" class="tab-btn active" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="9" x2="20" y2="9"></line>
+          <line x1="4" y1="15" x2="20" y2="15"></line>
+          <line x1="10" y1="3" x2="8" y2="21"></line>
+          <line x1="16" y1="3" x2="14" y2="21"></line>
+        </svg>
+        Factorial (n!)
+      </button>
+      <button id="tab-combinatorics" class="tab-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+        </svg>
+        Combinatorics (nPr / nCr)
+      </button>
+    </nav>
+
+    <!-- ==================== VIEW 1: FACTORIAL CALCULATOR ==================== -->
+    <section id="view-factorial">
+      <!-- Input Card -->
+      <div class="card">
+        <h2 class="card-title">Calculate Factorial</h2>
+        <p class="card-description">Computes 100% exact integer factorial with zero rounding errors, up to 10,000!.</p>
+
+        <form id="factorial-form" novalidate>
+          <div class="input-group-wrapper">
+            <label for="number-input" class="input-label">
+              <span>Enter whole number (n ≥ 0)</span>
+              <span class="badge">Supports BigInt</span>
+            </label>
+
+            <div class="stepper-input">
+              <button type="button" id="step-down-btn" class="step-btn" title="Decrease by 1" aria-label="Decrease number">−</button>
+              <input 
+                type="text" 
+                id="number-input" 
+                name="num" 
+                class="main-input" 
+                placeholder="e.g. 5, 25, 100" 
+                autocomplete="off" 
+                inputmode="numeric" 
+                spellcheck="false"
+                required
+              >
+              <button type="button" id="clear-input-btn" class="input-clear-btn" title="Clear input" aria-label="Clear input field">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <button type="button" id="step-up-btn" class="step-btn" title="Increase by 1" aria-label="Increase number">+</button>
+            </div>
+
+            <!-- Validation Error Alert -->
+            <div id="validation-alert" class="validation-message" role="alert">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span id="validation-text">Please enter a valid non-negative integer.</span>
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="presets-container">
+            <span class="presets-label">Popular Presets</span>
+            <div class="preset-chips">
+              <button type="button" class="chip-btn" data-value="0">0!</button>
+              <button type="button" class="chip-btn" data-value="1">1!</button>
+              <button type="button" class="chip-btn" data-value="5">5!</button>
+              <button type="button" class="chip-btn" data-value="10">10!</button>
+              <button type="button" class="chip-btn" data-value="20">20!</button>
+              <button type="button" class="chip-btn" data-value="50">50!</button>
+              <button type="button" class="chip-btn" data-value="100">100!</button>
+              <button type="button" class="chip-btn" data-value="500">500!</button>
+              <button type="button" class="chip-btn" data-value="1000">1000!</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button type="submit" class="btn-primary" id="calc-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              Calculate Factorial
+            </button>
+            <button type="button" class="btn-secondary" id="reset-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                <path d="M21 3v5h-5"></path>
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                <path d="M8 16H3v5"></path>
+              </svg>
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Result Card -->
+      <div id="result-card" class="card result-card" aria-live="polite">
+        <div class="result-header">
+          <div>
+            <div class="result-summary-label">Computation Result</div>
+            <div id="result-title" class="result-expression">5! = 120</div>
+          </div>
+        </div>
+
+        <!-- Metric Statistics Grid -->
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-box-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+              </svg>
+              Total Digits
+            </span>
+            <span id="stat-digits" class="stat-box-value">3</span>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-box-label" title="Trailing zeros at the end of the number">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+              </svg>
+              Trailing Zeros
+            </span>
+            <span id="stat-zeros" class="stat-box-value">1</span>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-box-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" y1="22" x2="4" y2="15"></line>
+              </svg>
+              Scientific
+            </span>
+            <span id="stat-scientific" class="stat-box-value">1.200000 × 10^2</span>
+          </div>
+
+          <div class="stat-box">
+            <span class="stat-box-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Time Taken
+            </span>
+            <span id="stat-time" class="stat-box-value">0.12 ms</span>
+          </div>
+        </div>
+
+        <!-- Value Container with Toolbar -->
+        <div class="value-container">
+          <div class="value-toolbar">
+            <span class="toolbar-info">Exact Calculated Value</span>
+            <div class="toolbar-actions">
+              <button type="button" id="toggle-format-btn" class="icon-button" title="Switch between comma grouped and raw digits">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                  <line x1="9" y1="20" x2="15" y2="20"></line>
+                  <line x1="12" y1="4" x2="12" y2="20"></line>
+                </svg>
+                Raw Digits
+              </button>
+              <button type="button" id="copy-btn" class="icon-button" title="Copy to clipboard">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy
+              </button>
+              <button type="button" id="download-btn" class="icon-button" title="Download exact result as text file">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download (.txt)
+              </button>
+            </div>
+          </div>
+          <pre id="value-display" class="value-display">120</pre>
+        </div>
+
+        <!-- Step by Step Expansion -->
+        <div class="expansion-container">
+          <div class="expansion-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Step-by-Step Mathematical Expansion
+          </div>
+          <div id="expansion-content" class="expansion-content">5! = 5 × 4 × 3 × 2 × 1 = 120</div>
+        </div>
+      </div>
+
+      <!-- History Card -->
+      <div class="card" style="margin-top: 1.5rem;">
+        <div class="history-header">
+          <h2 class="card-title" style="margin-bottom: 0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+            Calculation History
+          </h2>
+          <button type="button" id="clear-history-btn" class="icon-button" style="display: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Clear History
+          </button>
+        </div>
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 2: COMBINATORICS CALCULATOR ==================== -->
+    <section id="view-combinatorics" style="display: none;">
+      <div class="card">
+        <h2 class="card-title">Combinatorics: Permutations &amp; Combinations</h2>
+        <p class="card-description">Calculate Permutations P(n, r) and Combinations C(n, r) using exact arbitrary precision.</p>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+          <div style="flex: 1; min-width: 140px;">
+            <label for="comb-n" class="input-label" style="margin-bottom: 0.5rem;">Total items (n)</label>
+            <div class="stepper-input">
+              <input type="number" id="comb-n" class="main-input" placeholder="e.g. 52" min="0" max="2000" value="52">
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 140px;">
+            <label for="comb-r" class="input-label" style="margin-bottom: 0.5rem;">Chosen items (r)</label>
+            <div class="stepper-input">
+              <input type="number" id="comb-r" class="main-input" placeholder="e.g. 5" min="0" max="2000" value="5">
+            </div>
+          </div>
+        </div>
+
+        <div id="comb-error" class="validation-message" style="display: none; margin-bottom: 1.25rem;"></div>
+
+        <div class="comb-grid">
+          <div class="comb-card">
+            <span class="comb-header">Permutations — P(n, r)</span>
+            <span class="comb-formula">P(n, r) = n! / (n - r)! [Order matters]</span>
+            <span id="comb-perm-result" class="comb-result">311,875,200</span>
+          </div>
+          <div class="comb-card">
+            <span class="comb-header">Combinations — C(n, r)</span>
+            <span class="comb-formula">C(n, r) = n! / (r! × (n - r)!) [Order does NOT matter]</span>
+            <span id="comb-comb-result" class="comb-result">2,598,960</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Educational Accordion Section -->
+    <section class="card" aria-label="Educational Guides">
+      <h2 class="card-title" style="margin-bottom: 1rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        Understanding Factorials &amp; Math Guide
+      </h2>
+
+      <!-- Item 1 -->
+      <div class="accordion-item active">
+        <button class="accordion-trigger" type="button">
+          <span>What is a Factorial?</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion-body">
+          The factorial of a non-negative integer <code>n</code>, denoted by <code>n!</code>, is the product of all positive integers less than or equal to <code>n</code>:
+          <br><br>
+          <strong>n! = n × (n - 1) × (n - 2) × ... × 3 × 2 × 1</strong>
+          <br><br>
+          Factorials are fundamental in mathematics, including probability, combinatorics, series expansions (such as Taylor and Maclaurin series), and statistical physics.
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="accordion-item">
+        <button class="accordion-trigger" type="button">
+          <span>Why is 0! equal to 1?</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion-body">
+          There are three main mathematical reasons why <strong>0! = 1</strong>:
+          <ol style="margin-left: 1.25rem; margin-top: 0.5rem;">
+            <li><strong>Empty Product Convention:</strong> In mathematics, multiplying zero numbers yields the multiplicative identity, which is 1 (just as adding zero numbers yields 0).</li>
+            <li><strong>Recurrence Relation:</strong> Since <code>n! = n × (n - 1)!</code>, solving for <code>(n - 1)!</code> gives <code>(n - 1)! = n! / n</code>. Setting <code>n = 1</code> yields <code>0! = 1! / 1 = 1</code>.</li>
+            <li><strong>Combinatorics:</strong> The number of ways to arrange zero items is exactly 1 (the empty set).</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="accordion-item">
+        <button class="accordion-trigger" type="button">
+          <span>How are Trailing Zeros calculated? (Legendre's Formula)</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion-body">
+          Trailing zeros are created by pairs of prime factors 2 and 5 (since 2 × 5 = 10). In any factorial, factors of 2 are far more abundant than factors of 5. Therefore, the number of trailing zeros equals the exponent of the highest power of 5 dividing <code>n!</code>.
+          <br><br>
+          By <strong>Legendre's Formula</strong>:
+          <br>
+          <code>Zeros = ⌊n/5⌋ + ⌊n/25⌋ + ⌊n/125⌋ + ⌊n/625⌋ + ...</code>
+          <br><br>
+          For example, in <code>100!</code>: ⌊100/5⌋ + ⌊100/25⌋ = 20 + 4 = <strong>24 trailing zeros</strong>!
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="accordion-item">
+        <button class="accordion-trigger" type="button">
+          <span>Growth of Factorials (Mind-blowing Scale)</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="accordion-body">
+          Factorials grow faster than exponential functions (like 2<sup>n</sup> or 10<sup>n</sup>).
+          <table class="facts-table">
+            <thead>
+              <tr>
+                <th>n!</th>
+                <th>Value / Scale</th>
+                <th>Comparison</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>5!</strong></td>
+                <td>120</td>
+                <td>Small integer</td>
+              </tr>
+              <tr>
+                <td><strong>10!</strong></td>
+                <td>3,628,800</td>
+                <td>Seconds in ~42 days</td>
+              </tr>
+              <tr>
+                <td><strong>20!</strong></td>
+                <td>2,432,902,008,176,640,000</td>
+                <td>Exceeds 64-bit integer limit</td>
+              </tr>
+              <tr>
+                <td><strong>52!</strong></td>
+                <td>≈ 8.0658 × 10<sup>67</sup></td>
+                <td>Possible permutations of a standard deck of 52 cards (more than atoms in our galaxy!)</td>
+              </tr>
+              <tr>
+                <td><strong>100!</strong></td>
+                <td>≈ 9.3326 × 10<sup>157</sup></td>
+                <td>Far exceeds total atoms in the observable universe (~10<sup>80</sup>)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Factorial Master &bull; 100% Precision Arbitrary-Precision Engine</p>
+      <div class="footer-links">
+        <a href="#factorial-form">Back to top</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="main.js"></script>
 </body>
 </html>
